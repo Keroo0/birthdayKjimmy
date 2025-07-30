@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+
+* {
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+}
+
+body {
+  background: #135025;
+  display: grid;
+  place-items: center;
+  /* Perbaikan #1: Memastikan halaman bisa di-scroll */
+  min-height: 100vh; 
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+  color: #fff;
+  animation: fadeIn 2s ease-in-out;
+}
+
+/* --- GAYA DASAR UNTUK MOBILE (HP) --- */
+.card {
+  background: #fdfdfd;
+  border-radius: 8px;
+  width: 90vw;
+  max-width: 1000px;
+  height: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  display: flex;
+  /* Tata letak untuk HP: gambar di atas, teks di bawah */
+  flex-direction: column; 
+  padding: 1em;
+  overflow: hidden;
+}
+
+img.birthday {
+  /* Aturan gambar untuk HP: lebar penuh, tinggi otomatis */
+  width: 100%;
+  height: auto;
+  object-fit: contain; /* Memastikan seluruh gambar terlihat */
+  display: block;
+  margin: 0 auto 1em auto;
+  border-radius: 8px;
+}
+
+.text {
+  padding: 1em;
+  color: #333;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.muted {
+  opacity: 0.8;
+}
+
+.space {
+  height: 100px;
+}
+
+/* --- PERUBAHAN UNTUK LAYAR LEBAR (LAPTOP) --- */
+@media (min-width: 768px) {
+  .card {
+    /* Tata letak untuk Laptop: gambar di kanan, teks di kiri */
+    flex-direction: row-reverse; 
+    align-items: stretch;
+    text-align: left;
+    max-height: 80vh;
+  }
+
+  .text {
+    /* Atur lebar teks menjadi 55% */
+    width: 55%;
+    padding: 2em;
+  }
+
+  img.birthday {
+    /* Atur lebar gambar menjadi 45% */
+    width: 45%;
+    /* Atur tinggi gambar agar proporsional di laptop */
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain; /* Mengisi ruang tanpa distorsi */
+    border-radius: 0 8px 8px 0;
+    display: block ;
+    margin: 0 auto;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
