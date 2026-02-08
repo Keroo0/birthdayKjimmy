@@ -1,97 +1,786 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+:root {
+  --bg-color: #fce4ec;
+  --primary-pink: #f48fb1;
+  --dark-pink: #d81b60;
+  --text-main: #5e3546;
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --font-header: "Playfair Display", serif;
+  --font-body: "Poppins", sans-serif;
+}
 
 * {
   box-sizing: border-box;
-  transition: all 0.2s ease-in-out;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  background: #135025;
-  display: grid;
-  place-items: center;
-  /* Perbaikan #1: Memastikan halaman bisa di-scroll */
-  min-height: 100vh; 
-  margin: 0;
-  font-family: "Open Sans", sans-serif;
-  color: #fff;
-  animation: fadeIn 2s ease-in-out;
-}
-
-/* --- GAYA DASAR UNTUK MOBILE (HP) --- */
-.card {
-  background: #fdfdfd;
-  border-radius: 8px;
-  width: 90vw;
-  max-width: 1000px;
-  height: auto;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  text-align: center;
+  background-color: var(--bg-color);
+  background-image: radial-gradient(circle, #fce4ec 0%, #f8bbd0 100%);
+  height: 100vh;
+  overflow: hidden; /* Prevent scrolling during animations */
   display: flex;
-  /* Tata letak untuk HP: gambar di atas, teks di bawah */
-  flex-direction: column; 
-  padding: 1em;
-  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-body);
+  color: var(--text-main);
 }
 
-img.birthday {
-  /* Aturan gambar untuk HP: lebar penuh, tinggi otomatis */
+.hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --- 1. ENVELOPE STYLES --- */
+.container-envelope {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   width: 100%;
-  height: auto;
-  object-fit: contain; /* Memastikan seluruh gambar terlihat */
-  display: block;
-  margin: 0 auto 1em auto;
-  border-radius: 8px;
 }
 
-.text {
-  padding: 1em;
-  color: #333;
-  overflow-y: auto;
-  max-height: 100%;
+.envelope-wrapper {
+  background: var(--bg-color);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  width: 300px;
+  height: 200px;
+  /* background-color: #3760C9; */ /* Debug */
 }
 
-.muted {
+.envelope {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  background-color: #f06292;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.front {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 30;
+}
+
+.flap {
+  border-left: 150px solid transparent;
+  border-right: 150px solid transparent;
+  border-bottom: 82px solid transparent;
+  border-top: 98px solid #ec407a; /* Color slightly darker than pocket */
+  transform-origin: top;
+  width: 100%;
+  top: 0;
+  left: 0;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  transition:
+    transform 0.6s ease-in-out,
+    z-index 0.2s;
+  z-index: 40;
+}
+
+.pocket {
+  border-left: 150px solid #f48fb1;
+  border-right: 150px solid #f48fb1;
+  border-bottom: 90px solid #f06292;
+  border-top: 82px solid transparent;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  bottom: 0;
+  left: 0;
+}
+
+.letter {
+  position: absolute;
+  background-color: #fff;
+  width: 90%;
+  height: 90%;
+  top: 5%;
+  left: 5%;
+  border-radius: 6px;
+  box-shadow: 0 2px 26px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition:
+    transform 0.6s 0.6s,
+    opacity 0.4s,
+    z-index 0.1s 0.6s; /* Delay z-index switch until flap wraps */
+}
+
+.letter .text {
+  font-family: var(--font-header);
+  font-size: 1.2rem;
+  color: var(--dark-pink);
+  text-align: center;
+}
+
+/* Open State */
+.envelope.open .flap {
+  transform: rotateX(180deg);
+  z-index: 1; /* Move behind letter */
+}
+
+.envelope.open .letter {
+  transform: translateY(-120px);
+  /* z-index: 50; removed to keep it behind pocket while rising */
+}
+
+/* Hearts Animation */
+.hearts {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.heart {
+  position: absolute;
+  bottom: 0;
+  width: 15px;
+  height: 15px;
+  background: var(--dark-pink);
+  transform: rotate(45deg);
+  opacity: 0;
+}
+.heart:before,
+.heart:after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--dark-pink);
+}
+.heart:before {
+  left: -8px;
+}
+.heart:after {
+  top: -8px;
+}
+
+.tap-instruction {
+  margin-top: 40px;
+  font-size: 1rem;
+  color: var(--text-main);
   opacity: 0.8;
+  animation: pulse 2s infinite;
 }
 
-.space {
-  height: 100px;
-}
-
-/* --- PERUBAHAN UNTUK LAYAR LEBAR (LAPTOP) --- */
-@media (min-width: 768px) {
-  .card {
-    /* Tata letak untuk Laptop: gambar di kanan, teks di kiri */
-    flex-direction: row-reverse; 
-    align-items: stretch;
-    text-align: left;
-    max-height: 80vh;
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
   }
-
-  .text {
-    /* Atur lebar teks menjadi 55% */
-    width: 55%;
-    padding: 2em;
-  }
-
-  img.birthday {
-    /* Atur lebar gambar menjadi 45% */
-    width: 45%;
-    /* Atur tinggi gambar agar proporsional di laptop */
-    height: auto;
-    max-height: 80vh;
-    object-fit: contain; /* Mengisi ruang tanpa distorsi */
-    border-radius: 0 8px 8px 0;
-    display: block ;
-    margin: 0 auto;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
+  50% {
     opacity: 1;
   }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+/* --- 2. CAKE STYLES --- */
+.container-cake {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.cake {
+  position: relative;
+  width: 250px;
+  height: 200px;
+  margin-top: 50px;
+}
+
+/* Base Plate */
+.plate {
+  width: 270px;
+  height: 10px;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  position: absolute;
+  bottom: 0;
+  left: -10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+}
+
+.plate.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Tiers */
+.tier {
+  position: absolute;
+  transform: translateY(-200vh); /* Start off-screen */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+/* Improved Falling Animation using Keyframes for better control */
+@keyframes bounceDrop {
+  0% {
+    transform: translateY(-200vh);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(20px);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.tier.fall {
+  animation: bounceDrop 0.8s forwards;
+}
+
+/* Gold Glitter Mixin/Class simulation */
+.gold-accent {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #ffd700,
+    #ffd700 2px,
+    #ffecb3 3px,
+    #ffd700 4px
+  );
+}
+
+/* Bottom Tier - Blue Watercolor */
+.tier-bottom {
+  bottom: 0px;
+  width: 220px;
+  height: 90px;
+  left: 15px; /* Center relative to 250px container? Container is 250px. (250-220)/2 = 15 */
+  background: linear-gradient(135deg, #90caf9 0%, #bbdefb 50%, #64b5f6 100%);
+  border-bottom: 5px solid #42a5f5;
+  border-top: 3px solid #ffd700; /* Gold rim */
+  z-index: 1;
+}
+
+/* Top Tier - Cream */
+.tier-top {
+  bottom: 90px;
+  width: 170px;
+  height: 70px;
+  left: 40px; /* (250-170)/2 = 40 */
+  background: #fff9c4; /* Cream */
+  background-image: radial-gradient(
+    #ffd700 15%,
+    transparent 16%
+  ); /* Gold dots */
+  background-size: 15px 15px;
+  border-bottom: 3px solid #fbc02d;
+  z-index: 2;
+}
+
+/* Jam/Sauce Topping */
+.icing-drip {
+  position: absolute;
+  bottom: 0px; /* Relative to top layer? No, absolute in cake */
+  /* We need it on top of top tier. Top tier bottom is 90+70 = 160px. */
+  bottom: 150px;
+  left: 35px; /* Slightly wider than top tier (170px) */
+  width: 180px;
+  height: 25px;
+  background: #ef5350; /* Red Jam */
+  border-radius: 20px 20px 5px 5px;
+  z-index: 7;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.icing-drip::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 30px;
+  width: 15px;
+  height: 30px;
+  background: #ef5350;
+  border-radius: 0 0 10px 10px;
+  box-shadow:
+    40px 5px 0 #ef5350,
+    90px 2px 0 #ef5350,
+    130px 8px 0 #ef5350;
+}
+.icing-drip.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Candle */
+.candle {
+  position: absolute;
+  bottom: 165px; /* On top of icing */
+  left: 115px;
+  width: 20px;
+  height: 60px;
+  background: repeating-linear-gradient(
+    45deg,
+    #42a5f5,
+    #42a5f5 5px,
+    #90caf9 5px,
+    #90caf9 10px
+  );
+  border-radius: 4px;
+  z-index: 8;
+  transform: translateY(-200vh);
+  opacity: 0;
+}
+
+.candle.fall {
+  animation: bounceDrop 0.8s forwards 0.2s; /* Slight delay */
+  opacity: 1; /* Ensure opacity is handled by keyframe or set here */
+}
+
+.flame {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  width: 15px;
+  height: 25px;
+  background: radial-gradient(
+    ellipse at bottom,
+    #ffeb3b 0%,
+    #ff9800 60%,
+    transparent 100%
+  );
+  border-radius: 50% 50% 20% 20%;
+  box-shadow:
+    0 0 10px #ff9800,
+    0 0 20px #ffeb3b;
+  animation: flicker 1s infinite alternate;
+  transform-origin: bottom center;
+  transition:
+    transform 0.5s ease-out,
+    opacity 0.5s;
+}
+
+.flame.lit {
+  transform: translateX(-50%) scale(1);
+}
+
+.flame.out {
+  transform: translateX(-50%) scale(0.5); /* Shrink */
+  opacity: 0;
+}
+
+@keyframes flicker {
+  0% {
+    transform: translateX(-50%) scale(1) rotate(-2deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(-50%) scale(1.1) rotate(2deg);
+    opacity: 1;
+  }
+}
+
+/* Instructions */
+.cake-instruction {
+  position: absolute;
+  bottom: 20px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px 15px;
+  border-radius: 20px;
+  z-index: 20;
+}
+
+/* "hbd chann" Text */
+.birthday-text {
+  position: absolute;
+  top: 15%;
+  width: 100%;
+  text-align: center;
+  font-family: "Great Vibes", cursive;
+  font-size: 3.5rem;
+  color: var(--dark-pink);
+  text-shadow:
+    2px 2px 4px rgba(255, 255, 255, 0.8),
+    0 0 10px rgba(236, 64, 122, 0.2);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 1s ease-out;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.birthday-text .text {
+  background: linear-gradient(45deg, #d81b60, #ad1457);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.trumpet {
+  font-size: 2.5rem;
+  display: inline-block;
+  animation: wiggle 1s infinite ease-in-out;
+}
+
+.trumpet.left {
+  transform: rotate(-20deg);
+}
+.trumpet.right {
+  transform: rotate(20deg) scaleX(-1); /* Flip horizontally */
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-10deg) scale(1);
+  }
+  50% {
+    transform: rotate(10deg) scale(1.1);
+  }
+}
+.trumpet.right {
+  animation-name: wiggleRight;
+}
+@keyframes wiggleRight {
+  0%,
+  100% {
+    transform: rotate(10deg) scaleX(-1);
+  }
+  50% {
+    transform: rotate(-10deg) scaleX(-1) scale(1.1);
+  }
+}
+
+.birthday-text.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.birthday-text.fade-out {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* Smoke Effect */
+.smoke {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: rgba(150, 150, 150, 0.5);
+  border-radius: 50%;
+  animation: rise 2s forwards;
+  pointer-events: none;
+}
+
+@keyframes rise {
+  0% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -100px) scale(3);
+    opacity: 0;
+  }
+}
+
+/* --- DECORATIONS (Balloons & Stars) --- */
+.balloon {
+  position: absolute;
+  bottom: -100px;
+  width: 40px;
+  height: 50px;
+  background-color: var(--primary-pink);
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  animation: floatUp 6s ease-in-out infinite;
+  z-index: 5;
+  opacity: 0.8;
+}
+.balloon::before {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 10px;
+  background: var(--text-main);
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-120vh) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+.star {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: #ffd700;
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  animation: twinkle 2s infinite ease-in-out alternate;
+  z-index: 4;
+}
+
+@keyframes twinkle {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+/* --- 3. MESSAGE STYLES --- */
+.container-message {
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  animation: bgFadeIn 2s ease-in-out;
+  position: relative;
+  z-index: 10;
+}
+
+/* Add floating background elements for "vibes" */
+.container-message::before {
+  content: "🎂 🎈 ✨ 🎉";
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 5rem;
+  opacity: 0.1;
+  z-index: -1;
+  white-space: nowrap;
+  animation: floatVibe 10s infinite linear;
+}
+
+@keyframes floatVibe {
+  0% {
+    transform: translate(-50%, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-50%, -20px) rotate(5deg);
+  }
+  100% {
+    transform: translate(-50%, 0) rotate(0deg);
+  }
+}
+
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: var(--shadow);
+  transform: translateY(20px);
+  animation: slideUp 1s forwards 0.5s;
+  opacity: 0;
+  /* Limit card height if needed, but better to limit content */
+}
+
+/* Scrollable Text Container */
+#msg-paragraphs {
+  max-height: 250px; /* Adjust height as needed */
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-top: 20px;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--primary-pink) rgba(255, 255, 255, 0.3);
+}
+
+/* Custom Scrollbar for Chrome/Safari */
+#msg-paragraphs::-webkit-scrollbar {
+  width: 6px;
+}
+#msg-paragraphs::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+#msg-paragraphs::-webkit-scrollbar-thumb {
+  background-color: var(--primary-pink);
+  border-radius: 10px;
+}
+
+.card h1 {
+  font-family: var(--font-header);
+  color: var(--dark-pink);
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.card p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.signature {
+  margin-top: 30px;
+  font-weight: bold;
+  color: var(--dark-pink);
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Typing Effect Cursor */
+.typing::after {
+  content: "|";
+  animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Sequential Fade In */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.8s forwards ease-out;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Close Button */
+#close-btn {
+  margin-top: 30px;
+  padding: 12px 24px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  background-color: var(--dark-pink);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    opacity 1s;
+  box-shadow: 0 4px 15px rgba(216, 27, 96, 0.3);
+  opacity: 0;
+  pointer-events: none;
+}
+
+#close-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#close-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(216, 27, 96, 0.4);
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 600px) {
+  /* Scale down Envelope */
+  .envelope-wrapper {
+    transform: scale(0.8);
+  }
+
+  /* Scale down Cake */
+  .cake {
+    transform: scale(0.8);
+    margin-top: 100px; /* Adjust for smaller screens */
+  }
+  .birthday-text {
+    font-size: 2rem;
+    top: 10%;
+  }
+
+  /* Adjust Message Card */
+  .container-message {
+    width: 95%;
+  }
+  .card {
+    padding: 20px;
+  }
+  .card h1 {
+    font-size: 1.5rem;
+  }
+  .card p {
+    font-size: 0.9rem;
+  }
+
+  /* Adjust Decorations */
+  .balloon {
+    width: 30px;
+    height: 40px;
+  }
+}
+
+#close-btn:active {
+  transform: translateY(1px);
 }

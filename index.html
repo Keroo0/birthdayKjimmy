@@ -1,44 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Happy Birthday</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday Adinda</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Google Fonts: Playfair Display for premium feel, Lato/Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  </head>
+  <body>
+    <!-- 1. INTRO: ENVELOPE -->
+    <div class="container-envelope" id="envelope-container">
+      <div class="envelope-wrapper">
+        <div class="envelope">
+          <div class="front flap"></div>
+          <div class="front pocket"></div>
+          <div class="letter">
+            <div class="text">
+              <p>selamat ulang tahun</p>
+            </div>
+          </div>
+          <div class="hearts">
+            <div class="heart a1"></div>
+            <div class="heart a2"></div>
+            <div class="heart a3"></div>
+          </div>
+        </div>
+      </div>
+      <div class="tap-instruction">Klik untuk membuka</div>
+    </div>
 
-</head>
-<body>
-  <div class="card">
-    <img src="HBDmuslim.png" alt="Birthday" class="birthday" />
-    
-    <div class="text">
-     <h1>Selamat Ulang Tahun yang ke-34, Ka Jimy!</h1>
-     <p>
-       Alhamdulillah, segala puji bagi Allah ﷻ yang masih memberikan nikmat usia, kesehatan, dan iman hingga hari ini.
+    <!-- 2. ANIMATION: CAKE (Initially Hidden) -->
+    <div class="container-cake hidden" id="cake-container">
+      <div id="decorations-container"></div>
+      <!-- Container for balloons/stars -->
+      <div class="birthday-text" id="hbd-text">
+        <span class="trumpet left">🎺</span>
+        <span class="text">Happy Birthday Adinda Dwi Wulandari</span>
+        <span class="trumpet right">🎺</span>
+      </div>
 
-    <br><br>
-   Di usia yang ke-34 ini, semoga Ka Jimy selalu diberkahi dalam setiap langkah kehidupan.
-Semoga Allah senantiasa melimpahkan kesehatan lahir dan batin, memperluas rezeki yang halal dan thayyib, serta menjaga Ka Jimy dan keluarga tercinta dalam lindungan dan kasih sayang-Nya.
-    <br><br>
-    Semoga Ka Jimy selalu diberi kekuatan untuk menjadi pemimpin keluarga yang amanah, penuh kesabaran, dan kasih sayang dalam membimbing istri dan ketiga buah hati menuju jalan kebaikan dan takwa dan  juga Semoga dikitagarap.id menjadi perusahaan yang semakin besar.
-    <br><br>
-   Semoga segala doa dan harapan yang disimpan dalam hati dikabulkan oleh Allah di waktu terbaik-Nya.🎉🎂✨
-    <br><br>
-    Barakallahu fii umrik, Ka Jimy.
-Semoga menjadi pribadi yang senantiasa bertambah keimanan, kebijaksanaan, dan kebaikan dari tahun ke tahun.
-   <br><br>
-</p>
-<p class="muted">– Muhamad Yusup –</p>
+      <div class="cake">
+        <!-- Candle sits on top -->
+        <div class="candle">
+          <div class="flame"></div>
+        </div>
 
+        <!-- Jam/Sauce Drip -->
+        <div class="icing-drip"></div>
 
-      <audio controls autoplay>
-        <source src="musik/maherzein1.mp3" type="audio/mp3">
-        Your browser does not support the audio element.
+        <!-- Rainbow Layers (Stacked visually) -->
+        <!-- We use z-index in CSS to stack them. Bottom in HTML = Bottom visually usually, but we'll absolute position them -->
+        <!-- Top Tier (Cream) -->
+        <div class="tier tier-top"></div>
+        <!-- Bottom Tier (Blue/Watercolor) -->
+        <div class="tier tier-bottom"></div>
+        <!-- Blue/Purple (Bottom) -->
+
+        <div class="plate"></div>
+      </div>
+
+      <div class="table"></div>
+
+      <div class="cake-instruction hidden" id="candle-instruction">
+        <p>Tiup lilinnya...</p>
+      </div>
+    </div>
+
+    <!-- 3. MAIN CONTENT: MESSAGE (Initially Hidden) -->
+    <div class="container-message hidden" id="message-container">
+      <div class="card">
+        <div class="card-content">
+          <h1 id="msg-title"></h1>
+          <!-- Empty for typing effect -->
+          <div id="msg-paragraphs">
+            <p class="intro-note">Selamat ulang tahun dindaaa 🎉</p>
+            <p>
+              Semoga panjang umur, sehat selalu, makin dewasa,makin cantik,makin
+              sukses dan selalu dalam lindungan-Nya. Semoga di usia yang baru
+              ini, kamu jadi pribadi yang lebih baik lagi. 🤲
+            </p>
+            <p>
+              Doa aku buat kamu, semoga selalu diberi kekuatan dan ketabahan
+              buat jalanin hari-hari kamu. Yang sabar ya ngejalanin prosesnya,
+              dan harus tetep semangat kerjanya! 💪✨ Jangan lupa istirahat &
+              jaga kesehatan juga.(jangan begadang mulu sama jangan telat makan)
+            </p>
+            <p>Semoga apa yang kamu impikan bisa segera tercapai. Aminn.</p>
+            <p class="signature">– kero –</p>
+          </div>
+          <button id="close-btn">Makasi Kakak Ganteng😎</button>
+        </div>
+      </div>
+
+      <audio id="bg-music" loop>
+        <source src="musik/hbd.mp3" type="audio/mp3" />
       </audio>
     </div>
-  </div>
 
-  <script src="scripts.js"></script>
-</body>
+    <script src="scripts.js"></script>
+  </body>
 </html>
